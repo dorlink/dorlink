@@ -3,121 +3,401 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DorLink – קרובים לקרובים</title>
+<title>DorLink דמו</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fdf6ee;--card:#fff;--ink:#3b2f2a;--muted:#7a6a60;--accent:#d9774b;--accent2:#e9a96b;--soft:#f6e3d3;--ok:#5b9a6b}
+/* Layout idea: one phone-width column. The brand motif is two circles drawing close, on deep ink with gold; it appears on the opening screen and the good-morning card, and everything else stays quiet. */
+:root{
+  --bg:#f8f5ee; --surface:#ffffff; --ink:#102a2c; --muted:#56696a; --line:#dbe3e0;
+  --accent:#0f6b63; --accent-ink:#ffffff; --gold:#f2b632; --gold-soft:#fdf3d6;
+  --hero:#ffe7a3; --hero-ink:#2b2410; --hero-muted:#5f5530;
+  --ok:#1f7a4a; --ok-soft:#dff2e7; --warn:#96590a; --warn-soft:#fbe9c9; --crit:#b3362b; --crit-soft:#f8dedb;
+  --shadow:0 1px 2px rgba(16,42,44,.06),0 10px 28px rgba(16,42,44,.08);
+  --display:var(--font);
+  --font:"Rubik","Segoe UI","Arial Hebrew","Noto Sans Arabic",Arial,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1819; --surface:#152628; --ink:#e9f0ee; --muted:#9db1ae; --line:#263c3d;
+    --accent:#58c7ba; --accent-ink:#04201e; --gold:#f2b632; --gold-soft:#3a3013;
+    --hero:#4d3f12; --hero-ink:#fff3cf; --hero-muted:#dccb92;
+    --ok:#6fd39c; --ok-soft:#173826; --warn:#f0b65a; --warn-soft:#3b2d12; --crit:#f08a80; --crit-soft:#401b18;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.28);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1819; --surface:#152628; --ink:#e9f0ee; --muted:#9db1ae; --line:#263c3d;
+  --accent:#58c7ba; --accent-ink:#04201e; --gold:#f2b632; --gold-soft:#3a3013;
+  --hero:#4d3f12; --hero-ink:#fff3cf; --hero-muted:#dccb92;
+  --ok:#6fd39c; --ok-soft:#173826; --warn:#f0b65a; --warn-soft:#3b2d12; --crit:#f08a80; --crit-soft:#401b18;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 28px rgba(0,0,0,.28);
+  color-scheme:dark;
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:18px;line-height:1.5}
-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:var(--card);box-shadow:0 2px 8px #0001;flex-wrap:wrap;gap:10px}
-.logo{font-size:28px;font-weight:800;color:var(--accent)}
-.logo small{display:block;font-size:14px;color:var(--muted);font-weight:500}
-.langs button,.size button{border:1px solid var(--soft);background:var(--bg);border-radius:10px;padding:6px 10px;margin:2px;cursor:pointer;font-size:15px}
-.langs button.on{background:var(--accent);color:#fff}
-main{max-width:980px;margin:0 auto;padding:24px 16px}
-h1{font-size:34px;margin:10px 0}
-.beta{background:#fff4d6;border:1px solid #f0d58a;border-radius:12px;padding:10px 14px;font-size:15px;margin-bottom:20px}
-.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:20px}
-.role{background:var(--card);border-radius:20px;padding:24px;text-align:center;cursor:pointer;border:3px solid transparent;box-shadow:0 4px 14px #0000000d;transition:.2s}
-.role:hover{border-color:var(--accent2);transform:translateY(-3px)}
-.role .ic{font-size:52px}
-.role b{display:block;font-size:22px;margin:8px 0}
-.role span{color:var(--muted);font-size:15px}
-.screen{display:none}
-.screen.on{display:block}
-.back{background:none;border:none;color:var(--accent);font-size:17px;cursor:pointer;padding:0;margin-bottom:12px}
-.big{display:block;width:100%;font-size:26px;padding:22px;margin:12px 0;border:none;border-radius:20px;background:var(--accent);color:#fff;cursor:pointer}
-.big.alt{background:var(--card);color:var(--ink);border:2px solid var(--soft)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
-.card{background:var(--card);border-radius:16px;padding:18px;box-shadow:0 3px 10px #0000000d}
-.card h3{margin:0 0 8px;color:var(--accent)}
-.card ul{margin:0;padding-inline-start:20px}
-.pill{display:inline-block;background:var(--soft);border-radius:20px;padding:2px 10px;font-size:14px;margin:2px}
-.okmsg{color:var(--ok);font-weight:700;min-height:28px}
-footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:18px;line-height:1.45}
+.app{max-width:480px;margin:0 auto;padding:0 16px 48px;display:flex;flex-direction:column;gap:18px}
+header{display:flex;flex-direction:column;gap:10px;padding-top:16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:24px;color:var(--ink);line-height:1.1}
+.brand small{display:block;font-family:var(--font);font-weight:400;font-size:13px;color:var(--muted)}
+.mk{width:38px;height:24px;flex:none}
+.mk .a,.mark .c1{fill:var(--gold)}
+.mk .b{fill:none;stroke:var(--accent);stroke-width:2.5}
+.seg{display:flex;background:var(--surface);border-radius:999px;padding:4px;gap:2px;box-shadow:var(--shadow)}
+.seg button{font:inherit;font-size:15px;border:0;background:transparent;color:var(--muted);padding:7px 12px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--hero);color:var(--hero-ink);font-weight:500}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.note{font-size:13px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.note button{font:inherit;font-size:13px;background:none;border:0;color:var(--accent);text-decoration:underline;cursor:pointer;padding:0}
+.card{background:var(--surface);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow)}
+h1,h2{font-family:var(--display);margin:0;text-wrap:balance}
+h1{font-size:32px;line-height:1.15;font-weight:700}
+h2{font-size:22px;font-weight:700}
+p{margin:0}
+.muted{color:var(--muted);font-size:16px}
+.hero{background:var(--hero);color:var(--hero-ink)}
+.hero p{color:var(--hero-muted)}
+.intro{padding:30px 24px 34px;gap:16px}
+.intro h1{font-size:42px;line-height:1.08;font-weight:700}
+.intro p{font-size:19px;max-width:30ch}
+.mark{width:120px;height:64px}
+.mark .c1{fill:var(--accent)}
+.mark .c2{fill:none;stroke:var(--hero-ink);stroke-width:2.5}
+@media (prefers-reduced-motion:no-preference){
+  .mark .c1{animation:near1 1.1s cubic-bezier(.2,.7,.2,1) both}
+  .mark .c2{animation:near2 1.1s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes near1{from{transform:translateX(-14px)}to{transform:none}}
+  @keyframes near2{from{transform:translateX(14px)}to{transform:none}}
+  .big:active,.tile:active,.likes button:active{transform:translateY(1px) scale(.99)}
+}
+.ask{padding-inline:4px}
+.likes{display:flex;gap:10px}
+.likes button{flex:1;font-size:42px;line-height:1;padding:18px 0 14px;border-radius:20px;border:2px solid var(--gold);background:var(--surface);cursor:pointer}
+.likes button span{display:block;font:500 15px var(--font);color:var(--ink);margin-top:10px}
+.big{font:inherit;font-size:20px;font-weight:700;border:0;border-radius:14px;padding:14px 20px;background:var(--accent);color:var(--accent-ink);cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.14)}
+.big.ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.row>div{min-width:0}
+.pill{display:inline-block;font-size:14px;font-weight:500;padding:4px 11px;border-radius:999px;white-space:nowrap}
+.ok{background:var(--ok-soft);color:var(--ok)} .warn{background:var(--warn-soft);color:var(--warn)} .crit{background:var(--crit-soft);color:var(--crit)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tile{font:inherit;font-size:19px;font-weight:500;text-align:start;min-height:118px;border-radius:22px;border:0;background:var(--surface);color:var(--ink);padding:16px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;gap:10px;box-shadow:var(--shadow)}
+.ico{flex:none;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 13%,var(--surface))}
+.ico svg{width:28px;height:28px;stroke:var(--accent);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.choice{flex-direction:row;align-items:center;justify-content:flex-start;gap:16px;min-height:0;padding:18px;font-size:22px;font-family:var(--display);font-weight:700}
+.choice .go{margin-inline-start:auto;color:var(--muted);font-family:var(--font);font-weight:400}
+.adminlink{font:inherit;font-size:14px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;align-self:center;padding:8px}
+.avatar{flex:none;width:48px;height:48px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:21px}
+.avatar.g{background:var(--gold);color:#3a2a00}
+.list{display:flex;flex-direction:column;gap:14px}
+.item{display:flex;gap:12px;align-items:center}
+.item .txt{flex:1;min-width:0}
+.item .txt b{display:block}
+.bubble{max-width:85%;padding:11px 15px;border-radius:18px;background:var(--bg);align-self:flex-start}
+.bubble.me{background:var(--accent);color:var(--accent-ink);align-self:flex-end}
+.bubble small{display:block;font-size:13px;opacity:.75}
+form{display:flex;gap:8px}
+input[type=text]{flex:1;min-width:0;font:inherit;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+a{color:var(--accent);font-weight:500}
+.week{display:flex;gap:6px}
+.week i{flex:1;height:34px;border-radius:10px;background:var(--ok-soft);display:grid;place-items:center;font-style:normal;font-size:13px;color:var(--ok)}
+.week i.miss{background:var(--crit-soft);color:var(--crit)}
+.week i.today{outline:2px solid var(--accent)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:start;padding:10px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:13px;color:var(--muted);font-weight:500}
+td.n{font-variant-numeric:tabular-nums}
+.banner{background:var(--gold-soft);border-inline-start:5px solid var(--gold);border-radius:14px;padding:13px 16px;font-weight:500}
+.bar{height:10px;border-radius:999px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:999px;background:var(--accent)}
+.sub{align-self:stretch}.sub button{flex:1;padding:9px 4px}
+@media (min-width:900px){.app.wide{max-width:1080px}.app.wide #main{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:18px}.app.wide #main>:first-child,.app.wide #main>.seg{grid-column:1/-1}}
+.stat b{font-family:var(--display);font-size:36px;line-height:1;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
-<header>
-  <div class="logo">DorLink<small data-t="slogan"></small></div>
-  <div class="langs">
-    <button data-l="he">עברית</button><button data-l="en">English</button><button data-l="ar">العربية</button><button data-l="ru">Русский</button>
-  </div>
-</header>
-<main>
-  <section id="home" class="screen on">
-    <div class="beta" data-t="beta"></div>
-    <h1 data-t="welcome"></h1>
-    <p data-t="choose"></p>
-    <div class="roles">
-      <div class="role" data-go="senior"><div class="ic">👵</div><b data-t="r_senior"></b><span data-t="d_senior"></span></div>
-      <div class="role" data-go="family"><div class="ic">👨‍👩‍👧</div><b data-t="r_family"></b><span data-t="d_family"></span></div>
-      <div class="role" data-go="home2"><div class="ic">🏡</div><b data-t="r_home"></b><span data-t="d_home"></span></div>
-      <div class="role" data-go="admin"><div class="ic">🛠️</div><b data-t="r_admin"></b><span data-t="d_admin"></span></div>
+<div class="app">
+  <header>
+    <div class="top">
+      <div class="brand"><svg class="mk" viewBox="0 0 38 24" aria-hidden="true"><circle class="a" cx="12" cy="12" r="10"/><circle class="b" cx="25" cy="12" r="10"/></svg><span>DorLink<small id="tagline"></small></span></div>
+      <div class="seg" id="langs" role="group" aria-label="Language"></div>
     </div>
-  </section>
-
-  <section id="senior" class="screen">
-    <button class="back" data-t="back"></button>
-    <div class="size"><span data-t="textsize"></span> <button onclick="fs(1)">A+</button><button onclick="fs(-1)">A−</button></div>
-    <h1 data-t="hello"></h1>
-    <button class="big" onclick="ok('m_morning')" data-t="morning"></button>
-    <button class="big" onclick="ok('m_pill')" data-t="pill"></button>
-    <button class="big alt" onclick="ok('m_call')" data-t="call"></button>
-    <button class="big alt" onclick="ok('m_groups')" data-t="groups"></button>
-    <div class="okmsg" id="okmsg"></div>
-  </section>
-
-  <section id="family" class="screen">
-    <button class="back" data-t="back"></button>
-    <h1 data-t="r_family"></h1>
-    <div class="grid">
-      <div class="card"><h3 data-t="f_status"></h3><p data-t="f_status_t"></p></div>
-      <div class="card"><h3 data-t="f_calls"></h3><p data-t="f_calls_t"></p></div>
-      <div class="card"><h3 data-t="f_cal"></h3><p data-t="f_cal_t"></p></div>
-      <div class="card"><h3 data-t="f_msg"></h3><p data-t="f_msg_t"></p></div>
-    </div>
-  </section>
-
-  <section id="home2" class="screen">
-    <button class="back" data-t="back"></button>
-    <h1 data-t="r_home"></h1>
-    <div class="grid">
-      <div class="card"><h3 data-t="h_nurse"></h3><p data-t="h_nurse_t"></p></div>
-      <div class="card"><h3 data-t="h_visits"></h3><p data-t="h_visits_t"></p></div>
-      <div class="card"><h3 data-t="h_meals"></h3><p data-t="h_meals_t"></p></div>
-      <div class="card"><h3 data-t="h_events"></h3><p data-t="h_events_t"></p></div>
-    </div>
-  </section>
-
-  <section id="admin" class="screen">
-    <button class="back" data-t="back"></button>
-    <h1 data-t="r_admin"></h1>
-    <div class="grid">
-      <div class="card"><h3 data-t="a_verify"></h3><p data-t="a_verify_t"></p></div>
-      <div class="card"><h3 data-t="a_block"></h3><p data-t="a_block_t"></p></div>
-      <div class="card"><h3 data-t="a_stats"></h3><p><span class="pill">👵 1,240</span><span class="pill">👨‍👩‍👧 860</span><span class="pill">🏡 14</span></p></div>
-    </div>
-  </section>
-</main>
-<footer data-t="terms"></footer>
+    <div class="seg roles" id="roles" role="group"></div>
+    <div class="seg" id="sizes" dir="ltr" role="group" aria-label="Text size" style="align-self:flex-start"></div>
+    <div class="note"><span id="sample"></span><button type="button" id="reset"></button><button type="button" id="exit"></button></div>
+  </header>
+  <main id="main" class="list"></main>
+  <footer class="note" id="foot" style="justify-content:center"></footer>
+</div>
 <script>
-const T={
-he:{dir:"rtl",slogan:"קרובים לקרובים",beta:"⚠️ גרסת הדגמה (בטא). השירות ניתן כמות שהוא, ללא אחריות, ואין להסתמך עליו.",welcome:"ברוכים הבאים לדורלינק",choose:"בחרו מי אתם:",r_senior:"אני מבוגר/ת",d_senior:"מסך פשוט וגדול – חינם",r_family:"בן/בת משפחה",d_family:"לראות שהכול בסדר אצל ההורים",r_home:"בית אבות / דיור מוגן",d_home:"ניהול ומידע למוסד",r_admin:"ניהול מערכת",d_admin:"אימות, חסימה ונתונים",back:"→ חזרה",textsize:"גודל טקסט:",hello:"בוקר טוב! 🌞",morning:"☀️ אני בסדר – בוקר טוב",pill:"💊 לקחתי את התרופות",call:"📞 להתקשר למשפחה",groups:"👥 הקבוצות שלי",m_morning:"✔ המשפחה קיבלה את הבוקר טוב שלך",m_pill:"✔ נרשם, תודה!",m_call:"📞 מתקשר... (הדגמה)",m_groups:"👥 קבוצות יפתחו בגרסה הבאה",f_status:"סטטוס היום",f_status_t:"✔ אבא אישר בוקר טוב ב־08:12 · ✔ תרופות נלקחו",f_calls:"יומן שיחות",f_calls_t:"שיחה עם דנה – אתמול 19:30 (רק מי ומתי, בלי תוכן)",f_cal:"לוח משפחתי",f_cal_t:"🎂 יום הולדת לסבתא – יום שלישי",f_msg:"הודעות משפחה",f_msg_t:"שלחו תמונה או ברכה לאבא",h_nurse:"אחות תורנית",h_nurse_t:"רחל כהן – משמרת בוקר",h_visits:"אישור ביקורים",h_visits_t:"3 בקשות ממתינות לאישור",h_meals:"ארוחות",h_meals_t:"92% מהדיירים אכלו ארוחת צהריים",h_events:"אירועים",h_events_t:"ערב שירה – יום רביעי 17:00",a_verify:"אימות מוסדות",a_verify_t:"2 שאלוני אימות ממתינים לבדיקה",a_block:"חסימה / שחרור",a_block_t:"חיפוש משתמש וחסימה בלחיצה",a_stats:"נתונים",terms:"© DorLink · גרסת בטא · השימוש כפוף לתנאי השימוש"},
-en:{dir:"ltr",slogan:"Keeping loved ones close",beta:"⚠️ Demo (beta). Provided as-is, without liability; do not rely on it.",welcome:"Welcome to DorLink",choose:"Who are you?",r_senior:"I'm a senior",d_senior:"Simple, large screen – free",r_family:"Family member",d_family:"Know your parents are okay",r_home:"Nursing home / assisted living",d_home:"Management & info for institutions",r_admin:"System admin",d_admin:"Verification, blocking, data",back:"← Back",textsize:"Text size:",hello:"Good morning! 🌞",morning:"☀️ I'm fine – good morning",pill:"💊 I took my medicine",call:"📞 Call family",groups:"👥 My groups",m_morning:"✔ Your family got your good morning",m_pill:"✔ Recorded, thank you!",m_call:"📞 Calling... (demo)",m_groups:"👥 Groups coming in the next version",f_status:"Today's status",f_status_t:"✔ Dad said good morning at 08:12 · ✔ Medicine taken",f_calls:"Call log",f_calls_t:"Call with Dana – yesterday 19:30 (who & when only)",f_cal:"Family calendar",f_cal_t:"🎂 Grandma's birthday – Tuesday",f_msg:"Family messages",f_msg_t:"Send Dad a photo or a greeting",h_nurse:"Nurse on duty",h_nurse_t:"Rachel Cohen – morning shift",h_visits:"Visit approvals",h_visits_t:"3 requests pending",h_meals:"Meals",h_meals_t:"92% of residents ate lunch",h_events:"Events",h_events_t:"Sing-along – Wednesday 17:00",a_verify:"Institution verification",a_verify_t:"2 questionnaires awaiting review",a_block:"Block / unblock",a_block_t:"Find a user and block in one click",a_stats:"Data",terms:"© DorLink · Beta · Use subject to Terms of Use"},
-ar:{dir:"rtl",slogan:"قريبون من أحبّائنا",beta:"⚠️ نسخة تجريبية. تُقدَّم كما هي دون مسؤولية، ولا يُعتمد عليها.",welcome:"أهلاً بكم في DorLink",choose:"من أنتم؟",r_senior:"أنا مسنّ/ة",d_senior:"شاشة بسيطة وكبيرة – مجاناً",r_family:"فرد من العائلة",d_family:"اطمئن على والديك",r_home:"دار مسنين / سكن محمي",d_home:"إدارة ومعلومات للمؤسسة",r_admin:"إدارة النظام",d_admin:"تحقق، حظر وبيانات",back:"→ رجوع",textsize:"حجم النص:",hello:"صباح الخير! 🌞",morning:"☀️ أنا بخير – صباح الخير",pill:"💊 أخذت الدواء",call:"📞 اتصال بالعائلة",groups:"👥 مجموعاتي",m_morning:"✔ وصلت تحيتك للعائلة",m_pill:"✔ تم التسجيل، شكراً!",m_call:"📞 جارٍ الاتصال... (تجريبي)",m_groups:"👥 المجموعات في النسخة القادمة",f_status:"حالة اليوم",f_status_t:"✔ أبي قال صباح الخير 08:12 · ✔ أخذ الدواء",f_calls:"سجل المكالمات",f_calls_t:"مكالمة مع دانة – أمس 19:30",f_cal:"تقويم العائلة",f_cal_t:"🎂 عيد ميلاد الجدة – الثلاثاء",f_msg:"رسائل العائلة",f_msg_t:"أرسل صورة أو تحية لأبي",h_nurse:"الممرضة المناوبة",h_nurse_t:"راحيل كوهين – وردية الصباح",h_visits:"موافقة الزيارات",h_visits_t:"3 طلبات بانتظار الموافقة",h_meals:"الوجبات",h_meals_t:"92% تناولوا الغداء",h_events:"فعاليات",h_events_t:"أمسية غناء – الأربعاء 17:00",a_verify:"التحقق من المؤسسات",a_verify_t:"استبيانان بانتظار المراجعة",a_block:"حظر / إلغاء حظر",a_block_t:"ابحث عن مستخدم واحظره بنقرة",a_stats:"بيانات",terms:"© DorLink · نسخة تجريبية · الاستخدام خاضع لشروط الاستخدام"},
-ru:{dir:"ltr",slogan:"Близкие рядом",beta:"⚠️ Демо-версия (бета). Предоставляется как есть, без ответственности.",welcome:"Добро пожаловать в DorLink",choose:"Кто вы?",r_senior:"Я пожилой человек",d_senior:"Простой крупный экран – бесплатно",r_family:"Член семьи",d_family:"Знать, что с родителями всё хорошо",r_home:"Дом престарелых",d_home:"Управление и информация",r_admin:"Администратор",d_admin:"Проверка, блокировка, данные",back:"← Назад",textsize:"Размер текста:",hello:"Доброе утро! 🌞",morning:"☀️ Я в порядке – доброе утро",pill:"💊 Я принял лекарства",call:"📞 Позвонить семье",groups:"👥 Мои группы",m_morning:"✔ Семья получила ваше «доброе утро»",m_pill:"✔ Записано, спасибо!",m_call:"📞 Звоним... (демо)",m_groups:"👥 Группы – в следующей версии",f_status:"Статус сегодня",f_status_t:"✔ Папа отметился в 08:12 · ✔ Лекарства приняты",f_calls:"Журнал звонков",f_calls_t:"Звонок с Даной – вчера 19:30",f_cal:"Семейный календарь",f_cal_t:"🎂 День рождения бабушки – вторник",f_msg:"Сообщения семьи",f_msg_t:"Отправьте папе фото или привет",h_nurse:"Дежурная медсестра",h_nurse_t:"Рахель Коэн – утренняя смена",h_visits:"Одобрение визитов",h_visits_t:"3 запроса ожидают",h_meals:"Питание",h_meals_t:"92% жильцов пообедали",h_events:"Мероприятия",h_events_t:"Вечер песен – среда 17:00",a_verify:"Проверка учреждений",a_verify_t:"2 анкеты ожидают проверки",a_block:"Блокировка",a_block_t:"Найти пользователя и заблокировать",a_stats:"Данные",terms:"© DorLink · Бета · Использование по Условиям"}
+var T={
+he:{tagline:"קרובים לקרובים",
+ r_admin:"מנהל",rights:"כל הזכויות שמורות",room:"חדר ומיטה",visw:"ביקורים השבוע",t_grp:"קבוצות וערוצים",g_title:"קבוצות לפי תחומי עניין",g1:"שחמט ושש בש",g1t:"34 חברים",g2:"גינון במרפסת",g2t:"58 חברים",g3:"שירים של פעם",g3t:"112 חברים",g4:"סבים וסבתות לנכדים בחו״ל",g4t:"47 חברים",join:"להצטרף",joined:"הצטרפת",in_call:"מתקשר אל ",in_video:"שיחת וידאו עם ",end:"לסיים שיחה",video:"וידאו",sq:"מיכל שואלת: איך האוכל אצלך השבוע?",sthanks:"תודה. התשובה נשלחה למיכל.",f_t1:"מצב",f_t2:"קשר",f_t3:"בבית",f_t4:"עוד",callDad:"להתקשר לאבא",videoDad:"שיחת וידאו",chat:"הודעות עם אבא",f_calling:"בדמו לא מתבצעת שיחה אמיתית. במוצר השיחה נפתחת כאן, בלי אפליקציה נוספת.",dad:"אבא",h_week:"השבוע בבית",h1:"השתתף בהתעמלות בוקר, היום",h2:"השתתף בחוג ציור, יום ראשון",h3:"מוזמן להרצאה, יום רביעי 16:00",h_meals:"ארוחות היום",hm1:"בוקר: חביתה, סלט ולחם. אכל הכול",hm2:"צהריים: מרק, עוף ואורז. אכל חצי",s_send:"לשלוח לאבא סקר קצר",s_q:"איך האוכל אצלך השבוע?",s_wait:"הסקר נשלח. מחכים לתשובה של אבא.",s_ans:"אבא ענה: ",ng:"לפתוח קבוצה",ngPh:"שם הקבוצה, למשל: משפחת לוי",ngOk:"הקבוצה נפתחה, ואבא כבר חבר בה: ",choose:"מי אתה?",pitch:"האפליקציה ששומרת אתכם קרובים לאבא ולסבא, גם מרחוק.",c_senior:"אני בגיל הזהב",c_family:"אני בן משפחה",c_care:"אני מבית גיל הזהב",c_admin:"מנהל המערכת",exit:"יציאה",a_title:"מסך מנהל המערכת",a_s1:"קשישים פעילים",a_s2:"משפחות",a_s3:"מוסדות מאושרים",a_s4:"התרעות פתוחות",a_inst:"מוסדות",a_wait:"ממתין לאימות",a_ok:"מאושר",a_rej:"נדחה",approve:"לאשר",reject:"לדחות",a_users:"משתמשים",active:"פעיל",blocked:"חסום",block:"לחסום",unblock:"לשחרר",a_log:"יומן פעולות",a_empty:"עדיין אין פעולות",inst:["בית גיל הזהב, אגף ב׳","מעון הורים השלום","דיור מוגן הגפן"],usr:["יוני לוי","מיכל לוי","רות כהן","חשבון חדש, לא מזוהה"],l_block:"נחסם",l_unblock:"שוחרר",l_ok:"אושר",l_rej:"נדחה",sample:"דמו עם נתוני דוגמה",reset:"איפוס הדמו",
+ r_senior:"סבא",r_family:"משפחה",r_care:"דיור מוגן",
+ hello:"בוקר טוב, יוני",how:"איך אתה מרגיש הבוקר? לחץ על סמל אחד.",thanks:"תודה. המשפחה רואה שענית.",
+ good:"טוב",fine:"בסדר",low:"לא משהו",
+ meds:"התרופות של הבוקר",took:"לקחתי",taken:"נלקח",
+ t_msg:"הודעות מהמשפחה",t_cal:"לוח שנה",t_ch:"הערוצים שלי",t_call:"להתקשר",
+ back:"חזרה",write:"כתוב הודעה",send:"שלח",
+ daughter:"מיכל",son:"דוד",rel_d:"הבת",rel_s:"הבן",desk:"המוקד בבית",rel_desk:"צוות",
+ m1:"אבא, נבוא ביום שישי עם הילדים",m2:"מחכה לכם",
+ c1:"יום הולדת לנועם, בן 9",c1d:"מחר",c2:"ארוחת שישי אצל מיכל",c2d:"יום שישי, 18:30",c3:"יום הולדת לדוד",c3d:"בעוד 12 יום",waze:"ניווט ב-Waze",coming:"אני מגיע",comingOk:"אישרת הגעה",
+ ch1:"חדשות",ch1t:"מהדורת הבוקר מוכנה לקריאה",ch2:"קופת החולים שלי",ch2t:"תזכורת: חיסון שפעת בשבוע הבא",ch3:"המועצה המקומית",ch3t:"הסעה למועדון ביום שלישי",ch4:"ביטוח סיעודי",ch4t:"מה כולל כיסוי בסיסי",sponsored:"ממומן",
+ calling:"בדמו לא מתבצעת שיחה אמיתית. השיחה נרשמה ביומן שהמשפחה רואה.",
+ reminder:"תזכורת ממיכל",
+ nh:"בבית האבות עכשיו",nurse:"אחות אחראית",nurseName:"רחל, עד 15:00",doc:"ביקור רופא",docT:"יום שלישי, 10:00",visit:"שעות ביקור היום",visitT:"16:00 עד 19:00",book:"תאם ביקור",booked:"הביקור אושר להיום ב-17:00",v_wait:"הבקשה נשלחה, ממתינה לאישור הבית",v_rej:"הבית לא יכול בשעה הזו. נסו שעה אחרת",
+ k_t1:"היום",k_t2:"דיירים",k_t3:"פעילות",k_t4:"משפחות",k_shift:"משמרת בוקר, עד 15:00",k_nurse:"אחות אחראית: רחל",k_alerts:"התרעות",al1:"אסתר מזרחי לא ענתה לבוקר טוב ולא אישרה תרופות",al2:"ג׳ורג׳ חדאד סימן שהוא לא מרגיש טוב",al3:"רות כהן לא קיבלה ביקור 30 יום",k_report:"דוח משמרת",rp1:" מתוך 5 דיירים ענו לבוקר טוב",rp2:"ארוחת בוקר הוגשה לכולם, דיירת אחת אכלה מעט",rp3:"פנייה אחת ממשפחה ממתינה למענה",meal:"ארוחת בוקר",m_all:"הכול",m_half:"חצי",m_little:"מעט",k_week:"פעילות השבוע",ac1:"התעמלות בוקר",ac1d:"היום, 10:00",ac2:"חוג ציור",ac2d:"מחר, 11:00",ac3:"הרצאה: סיפורי ירושלים",ac3d:"יום רביעי, 16:00",ac4:"קבלת שבת עם המשפחות",ac4d:"יום שישי, 15:00",invite:"להזמין את יוני",invited:"יוני הוזמן",part:"משתתפים",k_visits:"בקשות ביקור",v1:"מיכל לוי אצל יוני, היום 17:00",v2:"דני כהן אצל רות, מחר 11:00",novis:"אין בקשות ממתינות",k_req:"פניות משפחות",q1:"משפחת מזרחי: מבקשים שיחה עם האחות",q2:"משפחת חורי: שאלה על התפריט",done:"טופל",markdone:"לסמן כטופל",k_ann:"הודעה לכל המשפחות",annPh:"למשל: מסיבת חנוכה ביום חמישי",annOk:"ההודעה נשלחה ל-42 משפחות, כל אחת בשפה שלה",k_survey:"סקר דיירים, החודש",sv1:"אוכל",sv2:"ניקיון",sv3:"יחס הצוות",
+ f_title:"יוני לוי",f_sub:"אבא · מנוי משפחה",
+ morning:"בוקר טוב",evening:"ערב טוב",noans:"עדיין לא ענה",remsent:"נשלחה לו תזכורת. אם לא יענה עד 09:00 תקבלו התראה.",ansat:"ענה ב-",at20:"יישלח ב-20:00",
+ medsShort:"תרופות הבוקר",confirmed:"אושרו",last:"כניסה אחרונה",today:"היום",
+ week:"בוקר טוב בשבוע האחרון",days:["א","ב","ג","ד","ה","ו","ש"],
+ calls:"מי דיבר איתו",min:"דק׳",yesterday:"אתמול",unknown:"מספר לא מוכר",notin:"לא ברשימת אנשי הקשר",now:"עכשיו",
+ sendRem:"שלח תזכורת",remPh:"למשל: לשתות מים",remOk:"התזכורת מופיעה במסך של סבא",
+ k_title:"בית גיל הזהב, אגף ב׳",k_sub:"מנוי מוסדי",k_need:"דורשים בירור",k_all:"דיירים במעקב",
+ name:"שם",seen:"נראה לאחרונה",copy:"העתק כטבלה",copied:"הטבלה הועתקה",
+ res:["יוני לוי","רות כהן","סלים חורי","אסתר מזרחי","ג׳ורג׳ חדאד"],esc:"דייר שלא ענה מקבל תזכורת אחרי 30 דקות, ואחר כך ההתראה עוברת לצוות ולמשפחה."},
+ar:{tagline:"قريبون من الأقارب",
+ r_admin:"المدير",rights:"جميع الحقوق محفوظة",room:"الغرفة والسرير",visw:"زيارات هذا الأسبوع",t_grp:"المجموعات والقنوات",g_title:"مجموعات حسب الاهتمامات",g1:"شطرنج وطاولة الزهر",g1t:"34 عضوًا",g2:"زراعة الشرفة",g2t:"58 عضوًا",g3:"أغاني زمان",g3t:"112 عضوًا",g4:"أجداد لأحفاد في الخارج",g4t:"47 عضوًا",join:"انضمام",joined:"انضممت",in_call:"جارٍ الاتصال بـ ",in_video:"مكالمة فيديو مع ",end:"إنهاء المكالمة",video:"فيديو",sq:"ميخال تسأل: كيف الطعام عندك هذا الأسبوع؟",sthanks:"شكرًا. أُرسل الجواب إلى ميخال.",f_t1:"الحالة",f_t2:"تواصل",f_t3:"في الدار",f_t4:"المزيد",callDad:"اتصال بأبي",videoDad:"مكالمة فيديو",chat:"رسائل مع أبي",f_calling:"لا تُجرى مكالمة حقيقية في العرض. في المنتج تُفتح المكالمة هنا، بلا تطبيق آخر.",dad:"أبي",h_week:"هذا الأسبوع في الدار",h1:"شارك في رياضة الصباح، اليوم",h2:"شارك في ورشة الرسم، الأحد",h3:"مدعو إلى المحاضرة، الأربعاء 16:00",h_meals:"وجبات اليوم",hm1:"الفطور: عجّة وسلطة وخبز. أكل الكل",hm2:"الغداء: حساء ودجاج وأرز. أكل النصف",s_send:"إرسال استطلاع قصير لأبي",s_q:"كيف الطعام عندك هذا الأسبوع؟",s_wait:"أُرسل الاستطلاع. بانتظار جواب أبي.",s_ans:"أجاب أبي: ",ng:"فتح مجموعة",ngPh:"اسم المجموعة، مثلًا: عائلة ليفي",ngOk:"فُتحت المجموعة وأبي عضو فيها: ",choose:"من أنت؟",pitch:"التطبيق الذي يبقيكم قريبين من الوالد والجدّ، حتى عن بُعد.",c_senior:"أنا من كبار السن",c_family:"أنا من العائلة",c_care:"أنا من دار المسنين",c_admin:"مدير النظام",exit:"خروج",a_title:"شاشة مدير النظام",a_s1:"مسنون نشطون",a_s2:"عائلات",a_s3:"مؤسسات معتمدة",a_s4:"تنبيهات مفتوحة",a_inst:"المؤسسات",a_wait:"بانتظار التحقق",a_ok:"معتمدة",a_rej:"مرفوضة",approve:"اعتماد",reject:"رفض",a_users:"المستخدمون",active:"نشط",blocked:"محظور",block:"حظر",unblock:"إلغاء الحظر",a_log:"سجل الإجراءات",a_empty:"لا إجراءات بعد",inst:["بيت العمر الذهبي، الجناح ب","دار السلام للمسنين","سكن الكرمة المحمي"],usr:["يوني ليفي","ميخال ليفي","روت كوهين","حساب جديد غير معروف"],l_block:"حُظر",l_unblock:"أُلغي الحظر",l_ok:"اعتُمدت",l_rej:"رُفضت",sample:"عرض تجريبي ببيانات نموذجية",reset:"إعادة العرض",
+ r_senior:"الجدّ",r_family:"العائلة",r_care:"دار المسنين",
+ hello:"صباح الخير، يوني",how:"كيف تشعر هذا الصباح؟ اضغط على رمز واحد.",thanks:"شكرًا. العائلة ترى أنك أجبت.",
+ good:"جيد",fine:"لا بأس",low:"ليس جيدًا",
+ meds:"أدوية الصباح",took:"أخذتها",taken:"تم",
+ t_msg:"رسائل العائلة",t_cal:"التقويم",t_ch:"قنواتي",t_call:"اتصال",
+ back:"رجوع",write:"اكتب رسالة",send:"إرسال",
+ daughter:"ميخال",son:"داود",rel_d:"الابنة",rel_s:"الابن",desk:"مكتب الدار",rel_desk:"الطاقم",
+ m1:"أبي، سنأتي يوم الجمعة مع الأولاد",m2:"بانتظاركم",
+ c1:"عيد ميلاد نوعم، 9 سنوات",c1d:"غدًا",c2:"عشاء الجمعة عند ميخال",c2d:"الجمعة، 18:30",c3:"عيد ميلاد داود",c3d:"بعد 12 يومًا",waze:"الملاحة عبر Waze",coming:"سأحضر",comingOk:"أكدت حضورك",
+ ch1:"الأخبار",ch1t:"نشرة الصباح جاهزة للقراءة",ch2:"صندوق المرضى",ch2t:"تذكير: لقاح الإنفلونزا الأسبوع القادم",ch3:"المجلس المحلي",ch3t:"مواصلات إلى النادي يوم الثلاثاء",ch4:"تأمين الرعاية",ch4t:"ماذا تشمل التغطية الأساسية",sponsored:"مموَّل",
+ calling:"لا تُجرى مكالمة حقيقية في العرض. سُجّلت المكالمة في السجل الذي تراه العائلة.",
+ reminder:"تذكير من ميخال",
+ nh:"في الدار الآن",nurse:"الممرضة المسؤولة",nurseName:"راحيل، حتى 15:00",doc:"زيارة الطبيب",docT:"الثلاثاء، 10:00",visit:"ساعات الزيارة اليوم",visitT:"16:00 حتى 19:00",book:"احجز زيارة",booked:"تمت الموافقة على الزيارة اليوم الساعة 17:00",v_wait:"أُرسل الطلب، بانتظار موافقة الدار",v_rej:"الدار غير متاحة في هذا الوقت. جرّبوا وقتًا آخر",
+ k_t1:"اليوم",k_t2:"النزلاء",k_t3:"الأنشطة",k_t4:"العائلات",k_shift:"وردية الصباح، حتى 15:00",k_nurse:"الممرضة المسؤولة: راحيل",k_alerts:"تنبيهات",al1:"إستر مزراحي لم تُجب على صباح الخير ولم تؤكد الأدوية",al2:"جورج حداد أشار إلى أنه ليس بخير",al3:"روت كوهين لم تستقبل زيارة منذ 30 يومًا",k_report:"تقرير الوردية",rp1:" من 5 نزلاء أجابوا على صباح الخير",rp2:"قُدّم الفطور للجميع، ونزيلة واحدة أكلت قليلًا",rp3:"طلب واحد من عائلة بانتظار الرد",meal:"الفطور",m_all:"الكل",m_half:"النصف",m_little:"قليل",k_week:"أنشطة الأسبوع",ac1:"رياضة الصباح",ac1d:"اليوم، 10:00",ac2:"ورشة رسم",ac2d:"غدًا، 11:00",ac3:"محاضرة: حكايات القدس",ac3d:"الأربعاء، 16:00",ac4:"استقبال السبت مع العائلات",ac4d:"الجمعة، 15:00",invite:"دعوة يوني",invited:"تمت دعوة يوني",part:"مشاركون",k_visits:"طلبات الزيارة",v1:"ميخال ليفي عند يوني، اليوم 17:00",v2:"داني كوهين عند روت، غدًا 11:00",novis:"لا طلبات بانتظار الرد",k_req:"طلبات العائلات",q1:"عائلة مزراحي: يطلبون محادثة مع الممرضة",q2:"عائلة خوري: سؤال عن قائمة الطعام",done:"تمت المعالجة",markdone:"تمت المعالجة",k_ann:"رسالة إلى كل العائلات",annPh:"مثلًا: حفلة يوم الخميس",annOk:"أُرسلت الرسالة إلى 42 عائلة، كلٌّ بلغتها",k_survey:"استطلاع النزلاء، هذا الشهر",sv1:"الطعام",sv2:"النظافة",sv3:"تعامل الطاقم",
+ f_title:"يوني ليفي",f_sub:"أبي · اشتراك عائلي",
+ morning:"صباح الخير",evening:"مساء الخير",noans:"لم يُجب بعد",remsent:"أُرسل له تذكير. إن لم يُجب حتى 09:00 ستصلكم إشعار.",ansat:"أجاب الساعة ",at20:"يُرسل الساعة 20:00",
+ medsShort:"أدوية الصباح",confirmed:"مؤكدة",last:"آخر دخول",today:"اليوم",
+ week:"صباح الخير في الأسبوع الأخير",days:["أحد","اثن","ثلا","أرب","خمي","جمع","سبت"],
+ calls:"من تحدث معه",min:"د",yesterday:"أمس",unknown:"رقم غير معروف",notin:"ليس في قائمة جهات الاتصال",now:"الآن",
+ sendRem:"أرسل تذكيرًا",remPh:"مثلًا: شرب الماء",remOk:"التذكير يظهر على شاشة الجدّ",
+ k_title:"بيت العمر الذهبي، الجناح ب",k_sub:"اشتراك مؤسسي",k_need:"بحاجة إلى متابعة",k_all:"نزلاء تحت المتابعة",
+ name:"الاسم",seen:"آخر ظهور",copy:"انسخ كجدول",copied:"تم نسخ الجدول",
+ res:["يوني ليفي","روت كوهين","سليم خوري","إستر مزراحي","جورج حداد"],esc:"النزيل الذي لم يُجب يتلقى تذكيرًا بعد 30 دقيقة، ثم ينتقل الإشعار إلى الطاقم والعائلة."},
+en:{tagline:"Close to your close ones",
+ r_admin:"Admin",rights:"All rights reserved",room:"Room / bed",visw:"Visits this week",t_grp:"Groups & channels",g_title:"Interest groups",g1:"Chess & backgammon",g1t:"34 members",g2:"Balcony gardening",g2t:"58 members",g3:"Songs of the old days",g3t:"112 members",g4:"Grandparents with grandkids abroad",g4t:"47 members",join:"Join",joined:"Joined",in_call:"Calling ",in_video:"Video call with ",end:"End call",video:"Video",sq:"Michal asks: how is the food this week?",sthanks:"Thank you. Your answer went to Michal.",f_t1:"Status",f_t2:"Contact",f_t3:"At the home",f_t4:"More",callDad:"Call Dad",videoDad:"Video call",chat:"Messages with Dad",f_calling:"No real call is placed in the demo. In the product the call opens right here, with no other app.",dad:"Dad",h_week:"This week at the home",h1:"Joined morning exercise, today",h2:"Joined painting class, Sunday",h3:"Invited to the talk, Wednesday 16:00",h_meals:"Today's meals",hm1:"Breakfast: omelette, salad and bread. Ate all",hm2:"Lunch: soup, chicken and rice. Ate half",s_send:"Send Dad a short survey",s_q:"How is the food this week?",s_wait:"Survey sent. Waiting for Dad's answer.",s_ans:"Dad answered: ",ng:"Open a group",ngPh:"Group name, e.g. The Levi family",ngOk:"Group opened, and Dad is already in it: ",choose:"Who are you?",pitch:"The app that keeps you close to Dad and Grandpa, even from afar.",c_senior:"I'm a senior",c_family:"I'm a family member",c_care:"I'm from a senior home",c_admin:"System admin",exit:"Sign out",a_title:"System admin",a_s1:"Active seniors",a_s2:"Families",a_s3:"Approved institutions",a_s4:"Open alerts",a_inst:"Institutions",a_wait:"Awaiting verification",a_ok:"Approved",a_rej:"Rejected",approve:"Approve",reject:"Reject",a_users:"Users",active:"Active",blocked:"Blocked",block:"Block",unblock:"Unblock",a_log:"Action log",a_empty:"No actions yet",inst:["Golden Age Home, Wing B","Shalom Parents' Home","HaGefen Sheltered Housing"],usr:["Yoni Levi","Michal Levi","Ruth Cohen","New account, unidentified"],l_block:"blocked",l_unblock:"unblocked",l_ok:"approved",l_rej:"rejected",sample:"Demo with sample data",reset:"Reset demo",
+ r_senior:"Grandpa",r_family:"Family",r_care:"Care home",
+ hello:"Good morning, Yoni",how:"How are you this morning? Tap one symbol.",thanks:"Thank you. Your family can see you answered.",
+ good:"Good",fine:"OK",low:"Not great",
+ meds:"Morning medication",took:"I took it",taken:"Taken",
+ t_msg:"Family messages",t_cal:"Calendar",t_ch:"My channels",t_call:"Call",
+ back:"Back",write:"Write a message",send:"Send",
+ daughter:"Michal",son:"David",rel_d:"Daughter",rel_s:"Son",desk:"Front desk",rel_desk:"Staff",
+ m1:"Dad, we're coming on Friday with the kids",m2:"Looking forward to it",
+ c1:"Noam's birthday, turning 9",c1d:"Tomorrow",c2:"Friday dinner at Michal's",c2d:"Friday, 18:30",c3:"David's birthday",c3d:"In 12 days",waze:"Navigate with Waze",coming:"I'm coming",comingOk:"You confirmed",
+ ch1:"News",ch1t:"The morning edition is ready",ch2:"My health fund",ch2t:"Reminder: flu shot next week",ch3:"Local council",ch3t:"Ride to the club on Tuesday",ch4:"Care insurance",ch4t:"What basic cover includes",sponsored:"Sponsored",
+ calling:"No real call is placed in the demo. The call was added to the log your family sees.",
+ reminder:"Reminder from Michal",
+ nh:"At the home now",nurse:"Nurse in charge",nurseName:"Rachel, until 15:00",doc:"Doctor's visit",docT:"Tuesday, 10:00",visit:"Visiting hours today",visitT:"16:00 to 19:00",book:"Book a visit",booked:"Visit approved for today at 17:00",v_wait:"Request sent, waiting for the home to approve",v_rej:"The home can't do that time. Try another",
+ k_t1:"Today",k_t2:"Residents",k_t3:"Activities",k_t4:"Families",k_shift:"Morning shift, until 15:00",k_nurse:"Nurse in charge: Rachel",k_alerts:"Alerts",al1:"Esther Mizrahi hasn't answered good morning or confirmed medication",al2:"George Haddad marked that he isn't feeling well",al3:"Ruth Cohen has had no visit for 30 days",k_report:"Shift report",rp1:" of 5 residents answered good morning",rp2:"Breakfast served to everyone, one resident ate little",rp3:"One family request is waiting for a reply",meal:"Breakfast",m_all:"All",m_half:"Half",m_little:"Little",k_week:"This week's activities",ac1:"Morning exercise",ac1d:"Today, 10:00",ac2:"Painting class",ac2d:"Tomorrow, 11:00",ac3:"Talk: Stories of Jerusalem",ac3d:"Wednesday, 16:00",ac4:"Shabbat welcome with families",ac4d:"Friday, 15:00",invite:"Invite Yoni",invited:"Yoni invited",part:"taking part",k_visits:"Visit requests",v1:"Michal Levi visiting Yoni, today 17:00",v2:"Danny Cohen visiting Ruth, tomorrow 11:00",novis:"No requests waiting",k_req:"Family requests",q1:"Mizrahi family: asking for a call with the nurse",q2:"Khoury family: question about the menu",done:"Handled",markdone:"Mark handled",k_ann:"Message to all families",annPh:"e.g. Hanukkah party on Thursday",annOk:"Message sent to 42 families, each in its own language",k_survey:"Residents' survey, this month",sv1:"Food",sv2:"Cleanliness",sv3:"Staff care",
+ f_title:"Yoni Levi",f_sub:"Dad · Family plan",
+ morning:"Good morning",evening:"Good evening",noans:"No answer yet",remsent:"A reminder was sent to him. If he doesn't answer by 09:00 you'll get an alert.",ansat:"Answered at ",at20:"Goes out at 20:00",
+ medsShort:"Morning medication",confirmed:"confirmed",last:"Last visit",today:"Today",
+ week:"Good-morning answers, last 7 days",days:["Su","Mo","Tu","We","Th","Fr","Sa"],
+ calls:"Who talked to him",min:"min",yesterday:"Yesterday",unknown:"Unknown number",notin:"Not in his contacts",now:"Now",
+ sendRem:"Send reminder",remPh:"e.g. drink water",remOk:"The reminder shows on Grandpa's screen",
+ k_title:"Golden Age Home, Wing B",k_sub:"Institution plan",k_need:"need a check",k_all:"residents followed",
+ name:"Name",seen:"Last seen",copy:"Copy as table",copied:"Table copied",
+ res:["Yoni Levi","Ruth Cohen","Salim Khoury","Esther Mizrahi","George Haddad"],esc:"A resident who hasn't answered gets a reminder after 30 minutes, then the alert goes to staff and family."}
 };
-let L="he",size=18;
-function setLang(l){L=l;const t=T[l];document.documentElement.lang=l;document.documentElement.dir=t.dir;
-document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t[e.dataset.t]||"");
-document.querySelectorAll(".langs button").forEach(b=>b.classList.toggle("on",b.dataset.l===l));}
-function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));document.getElementById("okmsg").textContent="";scrollTo(0,0)}
-function ok(k){document.getElementById("okmsg").textContent=T[L][k]}
-function fs(d){size=Math.min(30,Math.max(16,size+d*2));document.body.style.fontSize=size+"px"}
-document.querySelectorAll(".langs button").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
-document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>show(b.dataset.go));
-document.querySelectorAll(".back").forEach(b=>b.onclick=()=>show("home"));
-setLang("he");
+var LANGS=[["he","עברית"],["ar","العربية"],["en","English"]], ROLES=["senior","family","care","admin"];
+var MOODS=[["good","😊"],["fine","👍"],["low","😕"]];
+var ICON={msg:'<path d="M4 5h16v11H9l-5 4z"/>',cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',ch:'<path d="M4 10v4h3l6 4V6l-6 4zM17 9a4 4 0 010 6"/>',call:'<path d="M6 4h3l2 5-2 1a11 11 0 005 5l1-2 5 2v3a2 2 0 01-2 2A15 15 0 014 6a2 2 0 012-2z"/>'};
+var S;try{var hr=location.hash.slice(1);}catch(e){var hr="";}
+function fresh(){return {mood:null,time:null,meds:[{n:"Cardiloc",t:"08:00",ok:false},{n:"Vitamin D",t:"08:00",ok:false}],msgs:[{me:false,k:"m1"}],rem:null,remOk:false,coming:false,calls:[{k:"daughter",d:"yesterday",m:12},{k:"unknown",d:"yesterday",m:3,flag:true},{k:"son",d:"yesterday",m:6}],callNote:false,copied:false,visit:null,v2:"wait",inv:[false,false,false,false],q:[false,false],ann:false,grp:[false,false,false,false],incall:null,fcall:null,survey:null,ng:null,inst:["ok","wait","wait"],usr:[false,false,false,false],log:[]};}
+S=fresh();
+var lang="he",role=(["senior","family","care","admin"].indexOf(hr)>=0?hr:null),view="home",cview="t1",fview="t1",zoom=1;var SIZES=[[1,"A"],[1.15,"A+"],[1.3,"A++"]];
+function t(k){return T[lang][k];}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function hhmm(){var d=new Date();return ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2);}
+function moodChar(){for(var i=0;i<MOODS.length;i++)if(MOODS[i][0]===S.mood)return MOODS[i][1];return "";}
+function medsDone(){return S.meds.filter(function(m){return m.ok;}).length;}
+function av(name,g){return '<div class="avatar'+(g?' g':'')+'">'+esc(name.charAt(0))+'</div>';}
+
+function senior(){
+  var h="";
+  if(view==="home"){
+    h+='<section class="card hero"><h1>'+t("hello")+'</h1>';
+    if(!S.mood){h+='<button type="button" class="big hello-btn" data-mood="'+MOODS[0][0]+'">'+MOODS[0][1]+' '+t(MOODS[0][0])+'</button>';}
+    else h+='<p style="font-size:22px">'+moodChar()+' '+t("thanks")+'</p>';
+    h+='</section>';
+    if(S.rem)h+='<div class="banner">'+t("reminder")+': '+esc(S.rem)+'</div>';
+    if(S.survey==="sent")h+='<section class="card"><h2>'+t("sq")+'</h2><div class="likes">'+MOODS.map(function(m){return '<button type="button" data-sv="'+m[0]+'">'+m[1]+'<span>'+t(m[0])+'</span></button>';}).join("")+'</div></section>';
+    else if(S.survey)h+='<div class="banner">'+t("sthanks")+'</div>';
+    h+='<section class="card"><h2>'+t("meds")+'</h2>'+S.meds.map(function(m,i){return '<div class="row"><div><b>'+m.n+'</b> <span class="muted">'+m.t+'</span></div>'+(m.ok?'<span class="pill ok">'+t("taken")+'</span>':'<button type="button" class="big" data-med="'+i+'">'+t("took")+'</button>')+'</div>';}).join("")+'</section>';
+    h+='<div class="tiles">'+[["call","t_call"]].map(function(x){return '<button type="button" class="tile" data-view="'+x[0]+'"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true">'+ICON[x[0]]+'</svg></span>'+t(x[1])+'</button>';}).join("")+'</div>';
+    return h;
+  }
+  h+='<button type="button" class="big ghost" data-view="home">'+t("back")+'</button>';
+  if(view==="msg"){
+    h+='<section class="card"><h2>'+t("t_msg")+'</h2><div class="list">'+S.msgs.map(function(m){return '<div class="bubble'+(m.me?' me':'')+'">'+(m.me?'':'<small>'+t("daughter")+'</small>')+(m.k?t(m.k):esc(m.x))+'</div>';}).join("")+'</div><form id="f"><input type="text" id="msgInput" autocomplete="off" placeholder="'+t("write")+'" aria-label="'+t("write")+'"><button class="big" type="submit">'+t("send")+'</button></form></section>';
+  }
+  if(view==="cal"){
+    h+='<section class="card"><h2>'+t("t_cal")+'</h2><div class="list">'+
+     '<div class="item">'+av("N",1)+'<div class="txt"><b>'+t("c1")+'</b><span class="muted">'+t("c1d")+'</span></div></div>'+
+     '<div class="item">'+av(t("daughter"))+'<div class="txt"><b>'+t("c2")+'</b><span class="muted">'+t("c2d")+'</span><br><a href="https://waze.com/ul?q=Modiin%20Illit&navigate=yes" target="_blank" rel="noopener">'+t("waze")+'</a></div></div>'+
+     (S.coming?'<span class="pill ok" style="align-self:flex-start">'+t("comingOk")+'</span>':'<button type="button" class="big" data-coming="1">'+t("coming")+'</button>')+
+     '<div class="item">'+av(t("son"),1)+'<div class="txt"><b>'+t("c3")+'</b><span class="muted">'+t("c3d")+'</span></div></div>'+
+     '</div></section>';
+  }
+  if(view==="ch"){
+    h+='<section class="card"><h2>'+t("t_ch")+'</h2><div class="list">'+[1,2,3,4].map(function(i){return '<div class="item">'+av(t("ch"+i),i%2===0)+'<div class="txt"><b>'+t("ch"+i)+(i===4?' <span class="pill warn">'+t("sponsored")+'</span>':'')+'</b><span class="muted">'+t("ch"+i+"t")+'</span></div></div>';}).join("")+'</div></section>';
+  }
+  if(view==="ch"){
+    h+='<section class="card"><h2>'+t("g_title")+'</h2><div class="list">'+(S.ng?'<div class="item">'+av(S.ng,1)+'<div class="txt"><b>'+esc(S.ng)+'</b></div><span class="pill ok">'+t("joined")+'</span></div>':'')+[1,2,3,4].map(function(i){return '<div class="item">'+av(t("g"+i),i%2===0)+'<div class="txt"><b>'+t("g"+i)+'</b><span class="muted">'+t("g"+i+"t")+'</span></div>'+(S.grp[i-1]?'<span class="pill ok">'+t("joined")+'</span>':'<button type="button" class="big ghost" style="font-size:16px;padding:9px 14px" data-grp="'+(i-1)+'">'+t("join")+'</button>')+'</div>';}).join("")+'</div></section>';
+  }
+  if(view==="call"){
+    if(S.incall){
+      h+='<section class="card hero" style="align-items:center;text-align:center">'+av(t(S.incall.k))+'<h1>'+t(S.incall.v?"in_video":"in_call")+t(S.incall.k)+'</h1><p>'+t("f_calling")+'</p><div class="row"><button type="button" class="big ghost" data-callv="1">'+t("video")+'</button><button type="button" class="big" style="background:var(--crit);color:var(--surface)" data-end="1">'+t("end")+'</button></div></section>';
+    } else {
+      h+='<section class="card"><h2>'+t("t_call")+'</h2><div class="list">'+[["daughter","rel_d"],["son","rel_s"],["desk","rel_desk"]].map(function(c,i){return '<button type="button" class="tile" style="min-height:0;flex-direction:row;align-items:center;justify-content:flex-start" data-call="'+c[0]+'">'+av(t(c[0]),i===1)+'<span>'+t(c[0])+'<br><span class="muted">'+t(c[1])+'</span></span></button>';}).join("")+'</div></section>';
+    }
+  }
+  return h;
+}
+function family(){
+  var h='<section class="card"><div class="item">'+av(t("f_title"))+'<div class="txt"><h1 style="font-size:26px">'+t("f_title")+'</h1><span class="muted">'+t("f_sub")+'</span></div></div>';
+  if(S.fcall)h+='<div class="banner">'+t(S.fcall==="v"?"in_video":"in_call")+t("dad")+'</div><p class="muted">'+t("f_calling")+'</p><button type="button" class="big" style="background:var(--crit);color:var(--surface)" data-fend="1">'+t("end")+'</button>';
+  else h+='<div class="row" style="justify-content:flex-start;flex-wrap:wrap"><button type="button" class="big" data-fcall="a">'+t("callDad")+'</button><button type="button" class="big ghost" data-fcall="v">'+t("videoDad")+'</button></div>';
+  h+='</section>';
+  h+='<div class="seg sub" role="group">'+["t1","t2","t3","t4"].map(function(c){return '<button type="button" data-fview="'+c+'" aria-pressed="'+(c===fview)+'">'+t("f_"+c)+'</button>';}).join("")+'</div>';
+  if(fview==="t1"){
+    var d=medsDone();
+    h+='<section class="card"><div class="row"><div><b>'+t("morning")+'</b></div>'+(S.mood?'<span class="pill ok">'+moodChar()+' '+t("ansat")+S.time+'</span>':'<span class="pill crit">'+t("noans")+'</span>')+'</div>'+(S.mood?'':'<p class="muted">'+t("remsent")+'</p>')+'<div class="row"><div><b>'+t("evening")+'</b></div><span class="pill warn">'+t("at20")+'</span></div><div class="row"><div><b>'+t("medsShort")+'</b></div><span class="pill '+(d===S.meds.length?'ok':'warn')+'">'+d+'/'+S.meds.length+' '+t("confirmed")+'</span></div><div class="row"><div><b>'+t("last")+'</b></div><span class="muted">'+t("today")+' '+(S.time||"07:40")+'</span></div></section>';
+    h+='<section class="card"><h2>'+t("week")+'</h2><div class="week">'+t("days").map(function(x,i){var miss=i===2||(i===6&&!S.mood);return '<i class="'+(miss?'miss ':'')+(i===6?'today':'')+'">'+x+'</i>';}).join("")+'</div></section>';
+    h+='<section class="card"><h2>'+t("calls")+'</h2><div class="list">'+S.calls.map(function(c){return '<div class="item">'+av(c.flag?"?":t(c.k),c.flag)+'<div class="txt"><b>'+t(c.k)+'</b><span class="muted">'+t(c.d)+(c.m?' · '+c.m+' '+t("min"):'')+'</span></div>'+(c.flag?'<span class="pill crit" style="white-space:normal">'+t("notin")+'</span>':'')+'</div>';}).join("")+'</div></section>';
+  }
+  if(fview==="t2"){
+    h+='<section class="card"><h2>'+t("chat")+'</h2><div class="list">'+S.msgs.map(function(m){return '<div class="bubble'+(m.me?'':' me')+'">'+(m.me?'<small>'+t("dad")+'</small>':'')+(m.k?t(m.k):esc(m.x))+'</div>';}).join("")+'</div><form id="fm"><input type="text" id="fmInput" autocomplete="off" placeholder="'+t("write")+'" aria-label="'+t("write")+'"><button class="big" type="submit">'+t("send")+'</button></form></section>';
+    h+='<section class="card"><h2>'+t("sendRem")+'</h2><form id="r"><input type="text" id="remInput" autocomplete="off" placeholder="'+t("remPh")+'" aria-label="'+t("sendRem")+'"><button class="big" type="submit">'+t("send")+'</button></form>'+(S.remOk?'<p class="muted">'+t("remOk")+'</p>':'')+'</section>';
+  }
+  if(fview==="t3"){
+    h+='<section class="card"><h2>'+t("nh")+'</h2><div class="item">'+av(t("nurseName"),1)+'<div class="txt"><b>'+t("nurse")+'</b><span class="muted">'+t("nurseName")+'</span></div></div><div class="row"><div><b>'+t("room")+'</b></div><span class="muted">214-B</span></div><div class="row"><div><b>'+t("visw")+'</b></div><span class="muted">2</span></div><div class="row"><div><b>'+t("doc")+'</b></div><span class="muted">'+t("docT")+'</span></div><div class="row"><div><b>'+t("visit")+'</b></div><span class="muted">'+t("visitT")+'</span></div>'+(S.visit?'<span class="pill '+(S.visit==="ok"?"ok":S.visit==="rej"?"crit":"warn")+'" style="align-self:flex-start;white-space:normal">'+t(S.visit==="ok"?"booked":S.visit==="rej"?"v_rej":"v_wait")+'</span>':'<button type="button" class="big" data-book="1">'+t("book")+'</button>')+'</section>';
+    h+='<section class="card"><h2>'+t("h_week")+'</h2><div class="list"><div>'+t("h1")+'</div><div>'+t("h2")+'</div><div>'+t("h3")+'</div></div></section>';
+    h+='<section class="card"><h2>'+t("h_meals")+'</h2><div class="list"><div>'+t("hm1")+'</div><div>'+t("hm2")+'</div></div></section>';
+  }
+  if(fview==="t4"){
+    h+='<section class="card"><h2>'+t("s_send")+'</h2>'+(!S.survey?'<p>'+t("s_q")+'</p><button type="button" class="big" data-svsend="1">'+t("send")+'</button>':S.survey==="sent"?'<p class="muted">'+t("s_wait")+'</p>':'<p style="font-size:22px">'+t("s_ans")+MOODS.filter(function(m){return m[0]===S.survey;})[0][1]+' '+t(S.survey)+'</p>')+'</section>';
+    h+='<section class="card"><h2>'+t("ng")+'</h2><form id="g"><input type="text" id="ngInput" autocomplete="off" placeholder="'+t("ngPh")+'" aria-label="'+t("ng")+'"><button class="big" type="submit">'+t("send")+'</button></form>'+(S.ng?'<p class="muted">'+t("ngOk")+esc(S.ng)+'</p>':'')+'</section>';
+  }
+  return h;
+}
+function rows(){
+  var d=medsDone();
+  return [[S.mood?[moodChar()+" "+S.time,S.mood==="low"?"warn":"ok"]:[t("noans"),"crit"],[d+"/2",d===2?"ok":"warn"],S.time||"07:40","m_all"],
+   [["\uD83D\uDE0A 07:12","ok"],["3/3","ok"],"07:12","m_all"],[["\uD83D\uDC4D 06:55","ok"],["2/2","ok"],"08:20","m_half"],
+   [[t("noans"),"crit"],["0/2","crit"],t("yesterday"),"m_little"],[["\uD83D\uDE15 07:48","warn"],["1/1","ok"],"07:48","m_all"]];
+}
+function care(){
+  var R=rows(),need=R.filter(function(r){return r[0][1]!=="ok";}).length,ans=R.filter(function(r){return r[0][1]!=="crit";}).length;
+  var h='<section class="card"><h1 style="font-size:26px">'+t("k_title")+'</h1><span class="muted">'+t("k_sub")+'</span><div class="row"><div class="stat"><b>'+need+'</b> '+t("k_need")+'</div><div class="muted"><b>'+R.length+'</b> '+t("k_all")+'</div></div></section>';
+  h+='<div class="seg sub" role="group">'+["t1","t2","t3","t4"].map(function(c){return '<button type="button" data-cview="'+c+'" aria-pressed="'+(c===cview)+'">'+t("k_"+c)+'</button>';}).join("")+'</div>';
+  if(cview==="t1"){
+    h+='<section class="card"><div class="item">'+av(t("k_nurse").split(": ")[1]||"R",1)+'<div class="txt"><b>'+t("k_nurse")+'</b><span class="muted">'+t("k_shift")+'</span></div></div></section>';
+    var al=[["al1","crit"],["al2","warn"],["al3","warn"]];
+    h+='<section class="card"><h2>'+t("k_alerts")+'</h2><div class="list">'+(S.mood?'':'<div class="item"><span class="pill crit">!</span><div class="txt">'+t("res")[0]+': '+t("noans")+'</div></div>')+al.map(function(a){return '<div class="item"><span class="pill '+a[1]+'">!</span><div class="txt">'+t(a[0])+'</div></div>';}).join("")+'</div></section>';
+    h+='<section class="card"><h2>'+t("k_report")+'</h2><div class="list"><div>'+ans+t("rp1")+'</div><div>'+t("rp2")+'</div><div>'+t("rp3")+'</div></div></section>';
+  }
+  if(cview==="t2"){
+    h+='<section class="card"><div class="scroll"><table><thead><tr><th>'+t("name")+'</th><th>'+t("morning")+'</th><th>'+t("medsShort")+'</th><th>'+t("meal")+'</th><th>'+t("seen")+'</th><th>'+t("room")+'</th><th>'+t("visw")+'</th></tr></thead><tbody>'+R.map(function(r,i){return '<tr><td><b>'+t("res")[i]+'</b></td><td><span class="pill '+r[0][1]+'">'+r[0][0]+'</span></td><td class="n"><span class="pill '+r[1][1]+'">'+r[1][0]+'</span></td><td><span class="pill '+(r[3]==="m_all"?"ok":r[3]==="m_half"?"warn":"crit")+'">'+t(r[3])+'</span></td><td class="n">'+r[2]+'</td><td class="n">'+["214-B","108-A","215-A","301-B","110-A"][i]+'</td><td class="n"><span class="pill '+([2,3,1,0,1][i]?"ok":"crit")+'">'+[2,3,1,0,1][i]+'</span></td></tr>';}).join("")+'</tbody></table></div><p class="muted">'+t("esc")+'</p><button type="button" class="big ghost" id="copy">'+(S.copied?t("copied"):t("copy"))+'</button></section>';
+  }
+  if(cview==="t3"){
+    var P=[12,8,15,23];
+    h+='<section class="card"><h2>'+t("k_week")+'</h2><div class="list">'+[1,2,3,4].map(function(i){return '<div><div class="row"><div><b>'+t("ac"+i)+'</b><br><span class="muted">'+t("ac"+i+"d")+' · '+(P[i-1]+(S.inv[i-1]?1:0))+' '+t("part")+'</span></div>'+(S.inv[i-1]?'<span class="pill ok">'+t("invited")+'</span>':'')+'</div>'+(S.inv[i-1]?'':'<button type="button" class="big ghost" style="margin-top:8px;font-size:17px;padding:10px 16px" data-inv="'+(i-1)+'">'+t("invite")+'</button>')+'</div>';}).join("")+'</div></section>';
+  }
+  if(cview==="t4"){
+    var V=[["visit","v1"],["v2","v2"]].filter(function(v){return S[v[0]]==="wait";});
+    h+='<section class="card"><h2>'+t("k_visits")+'</h2>'+(V.length?'<div class="list">'+V.map(function(v){return '<div><b>'+t(v[1])+'</b><div class="row" style="justify-content:flex-start;margin-top:8px"><button type="button" class="big" data-vact="ok" data-v="'+v[0]+'">'+t("approve")+'</button><button type="button" class="big ghost" data-vact="rej" data-v="'+v[0]+'">'+t("reject")+'</button></div></div>';}).join("")+'</div>':'<p class="muted">'+t("novis")+'</p>')+'</section>';
+    h+='<section class="card"><h2>'+t("k_req")+'</h2><div class="list">'+[0,1].map(function(i){return '<div><div>'+t("q"+(i+1))+'</div>'+(S.q[i]?'<span class="pill ok" style="margin-top:6px">'+t("done")+'</span>':'<button type="button" class="big ghost" style="margin-top:8px;font-size:17px;padding:10px 16px" data-q="'+i+'">'+t("markdone")+'</button>')+'</div>';}).join("")+'</div></section>';
+    h+='<section class="card"><h2>'+t("k_ann")+'</h2><form id="a"><input type="text" id="annInput" autocomplete="off" placeholder="'+t("annPh")+'" aria-label="'+t("k_ann")+'"><button class="big" type="submit">'+t("send")+'</button></form>'+(S.ann?'<p class="muted">'+t("annOk")+'</p>':'')+'</section>';
+    var SV=[4.2,4.6,4.4];
+    h+='<section class="card"><h2>'+t("k_survey")+'</h2><div class="list">'+SV.map(function(s,i){return '<div><div class="row"><div>'+t("sv"+(i+1))+'</div><b style="font-variant-numeric:tabular-nums">'+s.toFixed(1)+' / 5</b></div><div class="bar"><i style="width:'+(s*20)+'%"></i></div></div>';}).join("")+'</div></section>';
+  }
+  return h;
+}
+function chooser(){
+  var IC={senior:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',family:'<circle cx="8" cy="9" r="3"/><circle cx="17" cy="10" r="2.5"/><path d="M2 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5M14.5 20c0-2.6 1.4-4.3 3.5-4.3 2 0 4 1.5 4 4.3"/>',care:'<path d="M3 11l9-7 9 7v9H3z"/><path d="M10 20v-6h4v6"/>'};
+  return '<section class="card hero intro"><svg class="mark" viewBox="0 0 120 64" aria-hidden="true"><circle class="c1" cx="42" cy="32" r="26"/><circle class="c2" cx="74" cy="32" r="26"/></svg><h1>'+t("tagline")+'</h1><p>'+t("pitch")+'</p></section><h2 class="ask">'+t("choose")+'</h2>'+["senior","family","care"].map(function(r){return '<button type="button" class="tile choice" data-role="'+r+'"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true">'+IC[r]+'</svg></span><span>'+t("c_"+r)+'</span><span class="go" aria-hidden="true">'+(lang==="en"?"\u203A":"\u2039")+'</span></button>';}).join("")+'<button type="button" class="adminlink" data-role="admin">'+t("c_admin")+'</button>';
+}
+function admin(){
+  var okc=S.inst.filter(function(x){return x==="ok";}).length;
+  var h='<section class="card"><h1 style="font-size:24px">'+t("a_title")+'</h1><div class="tiles">'+[[128,"a_s1"],[94,"a_s2"],[okc,"a_s3"],[5,"a_s4"]].map(function(x){return '<div class="stat"><b>'+x[0]+'</b><br><span class="muted">'+t(x[1])+'</span></div>';}).join("")+'</div></section>';
+  h+='<section class="card"><h2>'+t("a_inst")+'</h2><div class="list">'+S.inst.map(function(st,i){var cls=st==="ok"?"ok":st==="rej"?"crit":"warn";return '<div><div class="row"><div><b>'+t("inst")[i]+'</b></div><span class="pill '+cls+'">'+t(st==="ok"?"a_ok":st==="rej"?"a_rej":"a_wait")+'</span></div>'+(st==="wait"?'<div class="row" style="justify-content:flex-start;margin-top:8px"><button type="button" class="big" data-iact="ok" data-i="'+i+'">'+t("approve")+'</button><button type="button" class="big ghost" data-iact="rej" data-i="'+i+'">'+t("reject")+'</button></div>':'')+'</div>';}).join("")+'</div></section>';
+  h+='<section class="card"><h2>'+t("a_users")+'</h2><div class="list">'+S.usr.map(function(b,i){return '<div class="row"><div><b>'+t("usr")[i]+'</b><br><span class="pill '+(b?"crit":"ok")+'">'+t(b?"blocked":"active")+'</span></div><button type="button" class="big'+(b?"":" ghost")+'" data-ublock="'+i+'">'+t(b?"unblock":"block")+'</button></div>';}).join("")+'</div></section>';
+  h+='<section class="card"><h2>'+t("a_log")+'</h2>'+(S.log.length?'<div class="list">'+S.log.map(function(e){return '<div class="row"><div>'+t(e.w)[e.i]+' · '+t(e.k)+'</div><span class="muted">'+e.t+'</span></div>';}).join("")+'</div>':'<p class="muted">'+t("a_empty")+'</p>')+'</section>';
+  return h;
+}
+function render(){
+  var de=document.documentElement;de.lang=lang;de.dir=lang==="en"?"ltr":"rtl";
+  document.getElementById("tagline").textContent=t("tagline");
+  document.getElementById("sample").textContent=t("sample");
+  document.getElementById("reset").textContent=t("reset");
+  document.getElementById("langs").innerHTML=LANGS.map(function(l){return '<button type="button" data-lang="'+l[0]+'" aria-pressed="'+(l[0]===lang)+'">'+l[1]+'</button>';}).join("");
+  document.getElementById("roles").style.display="none";
+  var ex=document.getElementById("exit");ex.textContent=role?t("r_"+role)+" · "+t("exit"):"";ex.style.display=role?"":"none";
+  document.getElementById("sizes").innerHTML=SIZES.map(function(z){return '<button type="button" data-zoom="'+z[0]+'" aria-pressed="'+(z[0]===zoom)+'" style="font-size:'+(14*z[0])+'px;font-weight:700">'+z[1]+'</button>';}).join("");
+  document.getElementById("main").style.zoom=zoom;
+  document.querySelector(".app").classList.toggle("wide",role==="care"||role==="admin");
+  var DISC={he:"DorLink \u05D4\u05D5\u05D0 \u05DB\u05DC\u05D9 \u05E7\u05E9\u05E8 \u05D1\u05DC\u05D1\u05D3, \u05DC\u05D0 \u05E9\u05D9\u05E8\u05D5\u05EA \u05D7\u05D9\u05E8\u05D5\u05DD, \u05D4\u05E9\u05D2\u05D7\u05D4 \u05D0\u05D5 \u05D9\u05D9\u05E2\u05D5\u05E5 \u05E8\u05E4\u05D5\u05D0\u05D9. \u05D4\u05E9\u05D9\u05E8\u05D5\u05EA \u05E2\u05E9\u05D5\u05D9 \u05DC\u05D4\u05D9\u05D5\u05EA \u05DE\u05D5\u05E9\u05D1\u05EA \u05D0\u05D5 \u05DE\u05E7\u05D5\u05D8\u05E2 \u05DC\u05E2\u05D9\u05EA\u05D9\u05DD. \u05D0\u05D9\u05DF \u05DC\u05D4\u05E1\u05EA\u05DE\u05DA \u05E2\u05DC\u05D9\u05D5 \u05DB\u05DE\u05E2\u05E8\u05DB\u05EA \u05D4\u05EA\u05E8\u05D0\u05D4.",ar:"DorLink \u0623\u062F\u0627\u0629 \u062A\u0648\u0627\u0635\u0644 \u0641\u0642\u0637\u060C \u0648\u0644\u064A\u0633\u062A \u062E\u062F\u0645\u0629 \u0637\u0648\u0627\u0631\u0626 \u0623\u0648 \u0631\u0639\u0627\u064A\u0629 \u0623\u0648 \u0627\u0633\u062A\u0634\u0627\u0631\u0629 \u0637\u0628\u064A\u0629. \u0642\u062F \u062A\u062A\u0648\u0642\u0641 \u0627\u0644\u062E\u062F\u0645\u0629 \u0623\u0648 \u062A\u062A\u0642\u0637\u0639 \u0623\u062D\u064A\u0627\u0646\u064B\u0627. \u0644\u0627 \u062A\u0639\u062A\u0645\u062F \u0639\u0644\u064A\u0647\u0627 \u0643\u0646\u0638\u0627\u0645 \u0625\u0646\u0630\u0627\u0631.",en:"DorLink is a communication tool only. It is not an emergency, supervision or medical advice service. The service may be interrupted or intermittent. Do not rely on it as an alert system."};
+  document.getElementById("foot").innerHTML="\u00A9 2026 DorLink \u00B7 "+t("rights")+"<br><small>"+(DISC[lang]||DISC.he)+"</small>";
+  document.getElementById("main").innerHTML=!role?chooser():role==="senior"?senior():role==="family"?family():role==="care"?care():admin();
+}
+document.addEventListener("click",function(e){
+  var b=e.target.closest("button");if(!b)return;var d=b.dataset;
+  if(d.lang)lang=d.lang;
+  else if(d.zoom)zoom=+d.zoom;
+  else if(d.role){role=d.role;view="home";}
+  else if(d.view)view=d.view;
+  else if(d.mood){S.mood=d.mood;S.time=hhmm();}
+  else if(d.med)S.meds[+d.med].ok=true;
+  else if(d.coming)S.coming=true;
+  else if(d.book)S.visit="wait";
+  else if(d.cview)cview=d.cview;
+  else if(d.vact)S[d.v]=d.vact;
+  else if(d.inv)S.inv[+d.inv]=true;
+  else if(d.q)S.q[+d.q]=true;
+  else if(d.fview)fview=d.fview;
+  else if(d.fcall)S.fcall=d.fcall;
+  else if(d.fend){S.fcall=null;S.calls.unshift({k:"daughter",d:"now",m:0});}
+  else if(d.svsend)S.survey="sent";
+  else if(d.sv)S.survey=d.sv;
+  else if(d.grp)S.grp[+d.grp]=true;
+  else if(d.callv)S.incall.v=!S.incall.v;
+  else if(d.end){S.calls.unshift({k:S.incall.k,d:"now",m:0});S.incall=null;}
+  else if(d.iact){S.inst[+d.i]=d.iact;S.log.unshift({k:"l_"+d.iact,w:"inst",i:+d.i,t:hhmm()});}
+  else if(d.ublock){var j=+d.ublock;S.usr[j]=!S.usr[j];S.log.unshift({k:S.usr[j]?"l_block":"l_unblock",w:"usr",i:j,t:hhmm()});}
+  else if(d.call)S.incall={k:d.call,v:false};
+  else if(b.id==="exit"){role=null;view="home";}
+  else if(b.id==="reset"){S=fresh();view="home";}
+  else if(b.id==="copy"){
+    var csv=[[t("name"),t("morning"),t("medsShort"),t("seen")].join(",")].concat(rows().map(function(r,i){return [t("res")[i],r[0][0],r[1][0],r[2]].join(",");})).join("\n");
+    try{navigator.clipboard.writeText(csv).then(function(){S.copied=true;render();},function(){});}catch(err){}
+    return;
+  }
+  else return;
+  render();
+});
+document.addEventListener("submit",function(e){
+  e.preventDefault();
+  if(e.target.id==="f"){var v=document.getElementById("msgInput").value.trim();if(v)S.msgs.push({me:true,x:v});}
+  if(e.target.id==="fm"){var fv=document.getElementById("fmInput").value.trim();if(fv)S.msgs.push({me:false,x:fv});}
+  if(e.target.id==="g"){var gv=document.getElementById("ngInput").value.trim();if(gv)S.ng=gv;}
+  if(e.target.id==="a"){if(document.getElementById("annInput").value.trim())S.ann=true;}
+  if(e.target.id==="r"){var w=document.getElementById("remInput").value.trim();if(w){S.rem=w;S.remOk=true;}}
+  render();
+});
+render();
 </script>
 </body>
 </html>
