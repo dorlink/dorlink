@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DorLink – קרובים לקרובים</title>
+<style>
+:root{--bg:#fdf6ee;--card:#fff;--ink:#3b2f2a;--muted:#7a6a60;--accent:#d9774b;--accent2:#e9a96b;--soft:#f6e3d3;--ok:#5b9a6b}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:18px;line-height:1.5}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:var(--card);box-shadow:0 2px 8px #0001;flex-wrap:wrap;gap:10px}
+.logo{font-size:28px;font-weight:800;color:var(--accent)}
+.logo small{display:block;font-size:14px;color:var(--muted);font-weight:500}
+.langs button,.size button{border:1px solid var(--soft);background:var(--bg);border-radius:10px;padding:6px 10px;margin:2px;cursor:pointer;font-size:15px}
+.langs button.on{background:var(--accent);color:#fff}
+main{max-width:980px;margin:0 auto;padding:24px 16px}
+h1{font-size:34px;margin:10px 0}
+.beta{background:#fff4d6;border:1px solid #f0d58a;border-radius:12px;padding:10px 14px;font-size:15px;margin-bottom:20px}
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:20px}
+.role{background:var(--card);border-radius:20px;padding:24px;text-align:center;cursor:pointer;border:3px solid transparent;box-shadow:0 4px 14px #0000000d;transition:.2s}
+.role:hover{border-color:var(--accent2);transform:translateY(-3px)}
+.role .ic{font-size:52px}
+.role b{display:block;font-size:22px;margin:8px 0}
+.role span{color:var(--muted);font-size:15px}
+.screen{display:none}
+.screen.on{display:block}
+.back{background:none;border:none;color:var(--accent);font-size:17px;cursor:pointer;padding:0;margin-bottom:12px}
+.big{display:block;width:100%;font-size:26px;padding:22px;margin:12px 0;border:none;border-radius:20px;background:var(--accent);color:#fff;cursor:pointer}
+.big.alt{background:var(--card);color:var(--ink);border:2px solid var(--soft)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{background:var(--card);border-radius:16px;padding:18px;box-shadow:0 3px 10px #0000000d}
+.card h3{margin:0 0 8px;color:var(--accent)}
+.card ul{margin:0;padding-inline-start:20px}
+.pill{display:inline-block;background:var(--soft);border-radius:20px;padding:2px 10px;font-size:14px;margin:2px}
+.okmsg{color:var(--ok);font-weight:700;min-height:28px}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:24px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">DorLink<small data-t="slogan"></small></div>
+  <div class="langs">
+    <button data-l="he">עברית</button><button data-l="en">English</button><button data-l="ar">العربية</button><button data-l="ru">Русский</button>
+  </div>
+</header>
+<main>
+  <section id="home" class="screen on">
+    <div class="beta" data-t="beta"></div>
+    <h1 data-t="welcome"></h1>
+    <p data-t="choose"></p>
+    <div class="roles">
+      <div class="role" data-go="senior"><div class="ic">👵</div><b data-t="r_senior"></b><span data-t="d_senior"></span></div>
+      <div class="role" data-go="family"><div class="ic">👨‍👩‍👧</div><b data-t="r_family"></b><span data-t="d_family"></span></div>
+      <div class="role" data-go="home2"><div class="ic">🏡</div><b data-t="r_home"></b><span data-t="d_home"></span></div>
+      <div class="role" data-go="admin"><div class="ic">🛠️</div><b data-t="r_admin"></b><span data-t="d_admin"></span></div>
+    </div>
+  </section>
+
+  <section id="senior" class="screen">
+    <button class="back" data-t="back"></button>
+    <div class="size"><span data-t="textsize"></span> <button onclick="fs(1)">A+</button><button onclick="fs(-1)">A−</button></div>
+    <h1 data-t="hello"></h1>
+    <button class="big" onclick="ok('m_morning')" data-t="morning"></button>
+    <button class="big" onclick="ok('m_pill')" data-t="pill"></button>
+    <button class="big alt" onclick="ok('m_call')" data-t="call"></button>
+    <button class="big alt" onclick="ok('m_groups')" data-t="groups"></button>
+    <div class="okmsg" id="okmsg"></div>
+  </section>
+
+  <section id="family" class="screen">
+    <button class="back" data-t="back"></button>
+    <h1 data-t="r_family"></h1>
+    <div class="grid">
+      <div class="card"><h3 data-t="f_status"></h3><p data-t="f_status_t"></p></div>
+      <div class="card"><h3 data-t="f_calls"></h3><p data-t="f_calls_t"></p></div>
+      <div class="card"><h3 data-t="f_cal"></h3><p data-t="f_cal_t"></p></div>
+      <div class="card"><h3 data-t="f_msg"></h3><p data-t="f_msg_t"></p></div>
+    </div>
+  </section>
+
+  <section id="home2" class="screen">
+    <button class="back" data-t="back"></button>
+    <h1 data-t="r_home"></h1>
+    <div class="grid">
+      <div class="card"><h3 data-t="h_nurse"></h3><p data-t="h_nurse_t"></p></div>
+      <div class="card"><h3 data-t="h_visits"></h3><p data-t="h_visits_t"></p></div>
+      <div class="card"><h3 data-t="h_meals"></h3><p data-t="h_meals_t"></p></div>
+      <div class="card"><h3 data-t="h_events"></h3><p data-t="h_events_t"></p></div>
+    </div>
+  </section>
+
+  <section id="admin" class="screen">
+    <button class="back" data-t="back"></button>
+    <h1 data-t="r_admin"></h1>
+    <div class="grid">
+      <div class="card"><h3 data-t="a_verify"></h3><p data-t="a_verify_t"></p></div>
+      <div class="card"><h3 data-t="a_block"></h3><p data-t="a_block_t"></p></div>
+      <div class="card"><h3 data-t="a_stats"></h3><p><span class="pill">👵 1,240</span><span class="pill">👨‍👩‍👧 860</span><span class="pill">🏡 14</span></p></div>
+    </div>
+  </section>
+</main>
+<footer data-t="terms"></footer>
+<script>
+const T={
+he:{dir:"rtl",slogan:"קרובים לקרובים",beta:"⚠️ גרסת הדגמה (בטא). השירות ניתן כמות שהוא, ללא אחריות, ואין להסתמך עליו.",welcome:"ברוכים הבאים לדורלינק",choose:"בחרו מי אתם:",r_senior:"אני מבוגר/ת",d_senior:"מסך פשוט וגדול – חינם",r_family:"בן/בת משפחה",d_family:"לראות שהכול בסדר אצל ההורים",r_home:"בית אבות / דיור מוגן",d_home:"ניהול ומידע למוסד",r_admin:"ניהול מערכת",d_admin:"אימות, חסימה ונתונים",back:"→ חזרה",textsize:"גודל טקסט:",hello:"בוקר טוב! 🌞",morning:"☀️ אני בסדר – בוקר טוב",pill:"💊 לקחתי את התרופות",call:"📞 להתקשר למשפחה",groups:"👥 הקבוצות שלי",m_morning:"✔ המשפחה קיבלה את הבוקר טוב שלך",m_pill:"✔ נרשם, תודה!",m_call:"📞 מתקשר... (הדגמה)",m_groups:"👥 קבוצות יפתחו בגרסה הבאה",f_status:"סטטוס היום",f_status_t:"✔ אבא אישר בוקר טוב ב־08:12 · ✔ תרופות נלקחו",f_calls:"יומן שיחות",f_calls_t:"שיחה עם דנה – אתמול 19:30 (רק מי ומתי, בלי תוכן)",f_cal:"לוח משפחתי",f_cal_t:"🎂 יום הולדת לסבתא – יום שלישי",f_msg:"הודעות משפחה",f_msg_t:"שלחו תמונה או ברכה לאבא",h_nurse:"אחות תורנית",h_nurse_t:"רחל כהן – משמרת בוקר",h_visits:"אישור ביקורים",h_visits_t:"3 בקשות ממתינות לאישור",h_meals:"ארוחות",h_meals_t:"92% מהדיירים אכלו ארוחת צהריים",h_events:"אירועים",h_events_t:"ערב שירה – יום רביעי 17:00",a_verify:"אימות מוסדות",a_verify_t:"2 שאלוני אימות ממתינים לבדיקה",a_block:"חסימה / שחרור",a_block_t:"חיפוש משתמש וחסימה בלחיצה",a_stats:"נתונים",terms:"© DorLink · גרסת בטא · השימוש כפוף לתנאי השימוש"},
+en:{dir:"ltr",slogan:"Keeping loved ones close",beta:"⚠️ Demo (beta). Provided as-is, without liability; do not rely on it.",welcome:"Welcome to DorLink",choose:"Who are you?",r_senior:"I'm a senior",d_senior:"Simple, large screen – free",r_family:"Family member",d_family:"Know your parents are okay",r_home:"Nursing home / assisted living",d_home:"Management & info for institutions",r_admin:"System admin",d_admin:"Verification, blocking, data",back:"← Back",textsize:"Text size:",hello:"Good morning! 🌞",morning:"☀️ I'm fine – good morning",pill:"💊 I took my medicine",call:"📞 Call family",groups:"👥 My groups",m_morning:"✔ Your family got your good morning",m_pill:"✔ Recorded, thank you!",m_call:"📞 Calling... (demo)",m_groups:"👥 Groups coming in the next version",f_status:"Today's status",f_status_t:"✔ Dad said good morning at 08:12 · ✔ Medicine taken",f_calls:"Call log",f_calls_t:"Call with Dana – yesterday 19:30 (who & when only)",f_cal:"Family calendar",f_cal_t:"🎂 Grandma's birthday – Tuesday",f_msg:"Family messages",f_msg_t:"Send Dad a photo or a greeting",h_nurse:"Nurse on duty",h_nurse_t:"Rachel Cohen – morning shift",h_visits:"Visit approvals",h_visits_t:"3 requests pending",h_meals:"Meals",h_meals_t:"92% of residents ate lunch",h_events:"Events",h_events_t:"Sing-along – Wednesday 17:00",a_verify:"Institution verification",a_verify_t:"2 questionnaires awaiting review",a_block:"Block / unblock",a_block_t:"Find a user and block in one click",a_stats:"Data",terms:"© DorLink · Beta · Use subject to Terms of Use"},
+ar:{dir:"rtl",slogan:"قريبون من أحبّائنا",beta:"⚠️ نسخة تجريبية. تُقدَّم كما هي دون مسؤولية، ولا يُعتمد عليها.",welcome:"أهلاً بكم في DorLink",choose:"من أنتم؟",r_senior:"أنا مسنّ/ة",d_senior:"شاشة بسيطة وكبيرة – مجاناً",r_family:"فرد من العائلة",d_family:"اطمئن على والديك",r_home:"دار مسنين / سكن محمي",d_home:"إدارة ومعلومات للمؤسسة",r_admin:"إدارة النظام",d_admin:"تحقق، حظر وبيانات",back:"→ رجوع",textsize:"حجم النص:",hello:"صباح الخير! 🌞",morning:"☀️ أنا بخير – صباح الخير",pill:"💊 أخذت الدواء",call:"📞 اتصال بالعائلة",groups:"👥 مجموعاتي",m_morning:"✔ وصلت تحيتك للعائلة",m_pill:"✔ تم التسجيل، شكراً!",m_call:"📞 جارٍ الاتصال... (تجريبي)",m_groups:"👥 المجموعات في النسخة القادمة",f_status:"حالة اليوم",f_status_t:"✔ أبي قال صباح الخير 08:12 · ✔ أخذ الدواء",f_calls:"سجل المكالمات",f_calls_t:"مكالمة مع دانة – أمس 19:30",f_cal:"تقويم العائلة",f_cal_t:"🎂 عيد ميلاد الجدة – الثلاثاء",f_msg:"رسائل العائلة",f_msg_t:"أرسل صورة أو تحية لأبي",h_nurse:"الممرضة المناوبة",h_nurse_t:"راحيل كوهين – وردية الصباح",h_visits:"موافقة الزيارات",h_visits_t:"3 طلبات بانتظار الموافقة",h_meals:"الوجبات",h_meals_t:"92% تناولوا الغداء",h_events:"فعاليات",h_events_t:"أمسية غناء – الأربعاء 17:00",a_verify:"التحقق من المؤسسات",a_verify_t:"استبيانان بانتظار المراجعة",a_block:"حظر / إلغاء حظر",a_block_t:"ابحث عن مستخدم واحظره بنقرة",a_stats:"بيانات",terms:"© DorLink · نسخة تجريبية · الاستخدام خاضع لشروط الاستخدام"},
+ru:{dir:"ltr",slogan:"Близкие рядом",beta:"⚠️ Демо-версия (бета). Предоставляется как есть, без ответственности.",welcome:"Добро пожаловать в DorLink",choose:"Кто вы?",r_senior:"Я пожилой человек",d_senior:"Простой крупный экран – бесплатно",r_family:"Член семьи",d_family:"Знать, что с родителями всё хорошо",r_home:"Дом престарелых",d_home:"Управление и информация",r_admin:"Администратор",d_admin:"Проверка, блокировка, данные",back:"← Назад",textsize:"Размер текста:",hello:"Доброе утро! 🌞",morning:"☀️ Я в порядке – доброе утро",pill:"💊 Я принял лекарства",call:"📞 Позвонить семье",groups:"👥 Мои группы",m_morning:"✔ Семья получила ваше «доброе утро»",m_pill:"✔ Записано, спасибо!",m_call:"📞 Звоним... (демо)",m_groups:"👥 Группы – в следующей версии",f_status:"Статус сегодня",f_status_t:"✔ Папа отметился в 08:12 · ✔ Лекарства приняты",f_calls:"Журнал звонков",f_calls_t:"Звонок с Даной – вчера 19:30",f_cal:"Семейный календарь",f_cal_t:"🎂 День рождения бабушки – вторник",f_msg:"Сообщения семьи",f_msg_t:"Отправьте папе фото или привет",h_nurse:"Дежурная медсестра",h_nurse_t:"Рахель Коэн – утренняя смена",h_visits:"Одобрение визитов",h_visits_t:"3 запроса ожидают",h_meals:"Питание",h_meals_t:"92% жильцов пообедали",h_events:"Мероприятия",h_events_t:"Вечер песен – среда 17:00",a_verify:"Проверка учреждений",a_verify_t:"2 анкеты ожидают проверки",a_block:"Блокировка",a_block_t:"Найти пользователя и заблокировать",a_stats:"Данные",terms:"© DorLink · Бета · Использование по Условиям"}
+};
+let L="he",size=18;
+function setLang(l){L=l;const t=T[l];document.documentElement.lang=l;document.documentElement.dir=t.dir;
+document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t[e.dataset.t]||"");
+document.querySelectorAll(".langs button").forEach(b=>b.classList.toggle("on",b.dataset.l===l));}
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));document.getElementById("okmsg").textContent="";scrollTo(0,0)}
+function ok(k){document.getElementById("okmsg").textContent=T[L][k]}
+function fs(d){size=Math.min(30,Math.max(16,size+d*2));document.body.style.fontSize=size+"px"}
+document.querySelectorAll(".langs button").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
+document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>show(b.dataset.go));
+document.querySelectorAll(".back").forEach(b=>b.onclick=()=>show("home"));
+setLang("he");
+</script>
+</body>
+</html>
